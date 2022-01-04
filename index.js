@@ -5,21 +5,21 @@
 module.exports = app => {
 
     // Get an express router to expose new HTTP endpoints
-const router = app.route('/probot')
+  const router = app.route('/probot')
 
-// https://github.com/siimon/prom-client
-// prometheus metrics
-const client = require('prom-client')
-const Registry = client.Registry
-const register = new Registry()
-const collectDefaultMetrics = client.collectDefaultMetrics
+  // https://github.com/siimon/prom-client
+  // prometheus metrics
+  const client = require('prom-client')
+  const Registry = client.Registry
+  const register = new Registry()
+  const collectDefaultMetrics = client.collectDefaultMetrics
 
-// Probe every 5th second.
+  // Probe every 5th second.
 
-collectDefaultMetrics({register,
-  timeout: 5000,
-  prefix: 'default_'
-})
+  collectDefaultMetrics({register,
+    timeout: 5000,
+    prefix: 'default_'
+  })
 
 // register metrics on startup
   const prom = new client.Summary({

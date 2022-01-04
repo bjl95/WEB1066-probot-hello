@@ -40,11 +40,10 @@ describe('My Probot app', () => {
 
   test('process check_run completed event', async () => {
   // Simulates delivery of an issues.opened webhook
-  await app.receive({
-    name: 'check_run.completed',
-    payload: checkRunCompletedPayload
+    await app.receive({
+      name: 'check_run.completed',
+      payload: checkRunCompletedPayload
   })
-})
 })
 
 // For more information about testing with Jest see:
