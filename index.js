@@ -14,13 +14,6 @@ module.exports = app => {
   const register = new Registry()
   const collectDefaultMetrics = client.collectDefaultMetrics
 
-  // Probe every 5th second.
-
-  collectDefaultMetrics({register,
-    timeout: 5000,
-    prefix: 'default_'
-  })
-
 // register metrics on startup
   const prom = new client.Summary({
     name: 'builds_duration_ms',
@@ -45,39 +38,39 @@ module.exports = app => {
   })
 
   // Lets test incrementing the build count
-router.get('/test_count', (req, res) => {
-  app.log('GET -> /reset.')
-  prom.reset()
+  router.get('/test_count', (req, res) => {
+    app.log('GET -> /reset.')
+    prom.reset()
 
-  res.send('Counter reset ' + new Date())
-})
+    res.send('Counter reset ' + new Date())
+  })
 
-// Ping router
-router.get('/ping', (req, res) => {
-  res.send('pong')
-  app.log('pong response')
-})
+  // Ping router
+  router.get('/ping', (req, res) => {
+    res.send('pong')
+    app.log('pong response')
+  })
 
-// keep alive with Interval
-// Lets keep the prometheus and this app alive
-// Not this will use up all 540 hours in one month within about 14 days
-// and will not allow for troubleshooting unless you upgrade your account
-var http = require('http')
-if (process.env.APP_URL) {
-  app.log('setting up timer for this app -> ' + process.env.APP_URL)
-  setInterval(() => {
-    app.log('requesting ping on -> ' + process.env.APP_URL + '/probot/ping')
-    http.get(process.env.APP_URL + '/probot/ping')
-  }, 300000) // every 5 minutes (300000)
-}
+  // keep alive with Interval
+  // Lets keep the prometheus and this app alive
+  // Not this will use up all 540 hours in one month within about 14 days
+  // and will not allow for troubleshooting unless you upgrade your account
+  var http = require('http')
+  if (process.env.APP_URL) {
+    app.log('setting up timer for this app -> ' + process.env.APP_URL)
+    setInterval(() => {
+        app.log('requesting ping on -> ' + process.env.APP_URL + '/probot/ping')
+        http.get(process.env.APP_URL + '/probot/ping')
+    }, 300000) // every 5 minutes (300000)
+  }
 
-if (process.env.PROM_URL) {
-  app.log('setting up timer for prometheus -> ' + process.env.PROM_URL)
-  setInterval(() => {
-    app.log('requesting GET on -> ' + process.env.PROM_URL)
-    http.get(process.env.PROM_URL)
-  }, 300000) // every 5 minutes (300000)
-}
+  if (process.env.PROM_URL) {
+      app.log('setting up timer for prometheus -> ' + process.env.PROM_URL)
+      setInterval(() => {
+          app.log('requesting GET on -> ' + process.env.PROM_URL)
+          http.get(process.env.PROM_URL)
+      }, 300000) // every 5 minutes (300000)
+  }
 
   // Your code here
   app.log('Yay, the app was loaded!')
